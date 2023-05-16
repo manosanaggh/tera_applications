@@ -129,10 +129,10 @@ download_zookeeper() {
 }
 
 build_giraph() {
-  if [ ! -d Giraph_Teraheap ]
+   if [ ! -d Giraph_Teraheap ]
   then
-    git clone git@github.com:jackkolokasis/Giraph_TeraHeap.git >> "${COMPILE_OUT}" 2>&1
-    
+    #git clone git@github.com:jackkolokasis/Giraph_TeraHeap.git >> "${COMPILE_OUT}" 2>&1
+    git clone git@github.com:manosanaggh/Giraph_TeraHeap.git >> "${COMPILE_OUT}" 2>&1 
     retValue=$?
     message="Clone Giraph-TeraHeap" 
     check ${retValue} "${message}"

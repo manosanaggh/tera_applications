@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-START=8
-END=31
+START=$2
+END=$3
 
 # Print error/usage script message
 usage() {

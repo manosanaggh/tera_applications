@@ -16,7 +16,8 @@
 OUTPUT=$1        
 NUM_OF_EXECUTORS=$2
 
-ASYNC_PROF=../../util/async-profiler
+#ASYNC_PROF=../../util/async-profiler
+ASYNC_PROF=./async-profiler-2.9-linux-x64
 
 # Get the proccess id from the running
 processId=""
