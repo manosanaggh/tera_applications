@@ -47,12 +47,12 @@ benchmark.custom.algorithms =
 ```sh
   <property>
     <name>fs.defaultFS</name>
-    <value>hdfs://sith1-fast:9000</value>
+    <value>hdfs://sith1-fast:9001</value>
   </property>
 
   <property>
     <name>hadoop.tmp.dir</name>
-    <value>/spare/manosanag/giraph/hadoop</value> <!-- Must be in datasets directory -->
+    <value>/home1/public/manosanag/giraph_2/graphalytics/hadoop</value> <!-- Must be in datasets directory -->
   </property>
 ```
 

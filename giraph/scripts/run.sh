@@ -13,6 +13,20 @@
 ###################################################
 
 . ./conf.sh
+: '
+export JAVA_HOME=${MY_JAVA_HOME}
+export HADOOP_HOME=${HADOOP}
+export HADOOP_PREFIX=${HADOOP}
+export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
+export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib -Djava.library.path=$HADOOP_HOME/lib/native"
+export HADOOP_OPTS="-Djava.library.path=$LD_LIBRARY_PATH"
+export PATH=$HADOOP_HOME/bin:$PATH
+export PATH=$HADOOP_HOME/sbin:$PATH
+export HADOOP_MAPRED_HOME=${HADOOP_HOME}
+export HADOOP_COMMON_HOME=${HADOOP_HOME}
+export HADOOP_HDFS_HOME=${HADOOP_HOME}
+export YARN_HOME=${HADOOP_HOME}
+'
 # Print error/usage script message
 usage() {
     echo
@@ -33,19 +47,6 @@ usage() {
     exit 1
 }
 
-export JAVA_HOME=${MY_JAVA_HOME}
-export HADOOP_HOME=${HADOOP}
-export HADOOP_PREFIX=${HADOOP}
-export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
-export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib -Djava.library.path=$HADOOP_HOME/lib/native"
-export HADOOP_OPTS="-Djava.library.path=$LD_LIBRARY_PATH"
-export PATH=$HADOOP_HOME/bin:$PATH
-export PATH=$HADOOP_HOME/sbin:$PATH
-export HADOOP_MAPRED_HOME=${HADOOP_HOME}
-export HADOOP_COMMON_HOME=${HADOOP_HOME}
-export HADOOP_HDFS_HOME=${HADOOP_HOME}
-export YARN_HOME=${HADOOP_HOME}
-
 # Check if the last command executed succesfully
 #
 # if executed succesfully, print SUCCEED
@@ -65,19 +66,19 @@ check () {
 #   Create a cgroup
 setup_cgroup() {
 	# Change user/group IDs to your own
-	sudo cgcreate -a manosanag:carvsudo -t manosanag:carvsudo -g memory:memlim
-	cgset -r memory.limit_in_bytes="$MEM_BUDGET" memlim
+	sudo cgcreate -a manosanag:carvsudo -t manosanag:carvsudo -g memory:memlim2
+	cgset -r memory.limit_in_bytes="$MEM_BUDGET" memlim2
 }
 
 ##
 # Description:
 #   Delete a cgroup
 delete_cgroup() {
-	sudo cgdelete memory:memlim
+	sudo cgdelete memory:memlim2
 }
 
 run_cgexec() {
-  cgexec -g memory:memlim --sticky /opt/manosanag/tera_applications_gh/giraph/scripts/run_cgexec.sh "$@"
+  cgexec -g memory:memlim2 --sticky /opt/manosanag/tera_applications_gh_instance_2/giraph/scripts/run_cgexec.sh "$@"
 }
 
 ##
@@ -102,12 +103,12 @@ start_hadoop_yarn_zkeeper() {
 		jvm_opts+="-XX:-UseCompressedClassPointers "
 		jvm_opts+="-XX:AllocateH2At=\/mnt\/fmap\/file.txt "
 		jvm_opts+="-XX:H2FileSize=483183820800 "
+		jvm_opts+="-XX:+TeraHeapStatistics -Xlogth:\/opt\/manosanag\/tera_applications_gh_instance_2\/giraph\/graphalytics-platforms-giraph\/graphalytics-1.2.0-giraph-0.2-SNAPSHOT\/report\/teraHeap.txt "
 		jvm_opts+="-XX:TeraStripeSize=${STRIPE_SIZE} -XX:+ShowMessageBoxOnError<\/value>"
 	else
 		jvm_opts="\t\t<value>-Xmx${HEAP}g -XX:-ClassUnloading -XX:+UseParallelGC "
 		jvm_opts+="-XX:-UseParallelOldGC -XX:ParallelGCThreads=${GC_THREADS} -XX:-ResizeTLAB "
 		jvm_opts+="-XX:-UseCompressedOops -XX:-UseCompressedClassPointers <\/value>"
-		#jvm_opts+="-XX:+TimeBreakDown -Xlogtime:${BENCHMARK_SUITE//'/'/\\/}\/report\/teraCache.txt<\/value>"
 	fi
 
 	# Yarn child executor jvm flags
@@ -146,7 +147,7 @@ start_hadoop_yarn_zkeeper() {
 #   Clear files
 ##
 clear_files() {
-	rm -rf "/spare/manosanag/hadoop"
+	rm -rf "${DATASET_DIR}/graphalytics/hadoop_2"
   rm -rf "${TH_DIR}/file.txt"
   rm -rf "${ZOOKEEPER_DIR}/version-2"
   rm -rf "${ZOOKEEPER_DIR}/zookeeper_server.pid"
@@ -157,7 +158,7 @@ clear_files() {
 #   Cretea necessary files
 ##
 create_files() {
-  mkdir -p "/spare/manosanag/hadoop"
+  mkdir -p "${DATASET_DIR}/graphalytics/hadoop_2"
   #fallocate -l ${TH_FILE_SZ}G ${TH_DIR}/file.txt
 }
 
@@ -182,7 +183,7 @@ stop_hadoop_yarn_zkeeper() {
 	check ${retValue} "${message}"
 
   # Kill all the processes in the cgroup. In case the group 
-  xargs -a /sys/fs/cgroup/memory/memlim/cgroup.procs kill
+  xargs -a /sys/fs/cgroup/memory/memlim2/cgroup.procs kill
 }
 
 ##
@@ -294,7 +295,7 @@ update_conf() {
     "${BENCHMARK_CONFIG}"/benchmark.properties 
 
   # Set address of ZooKeeper deployment (required)
-  command="platform.giraph.zoo-keeper-address: ${HOSTNAME}:2181"
+  command="platform.giraph.zoo-keeper-address: ${HOSTNAME}:2182"
   sed -i '/platform.giraph.zoo-keeper-address/c\'"${command}" \
     "${BENCHMARK_CONFIG}"/platform.properties
 
@@ -584,17 +585,11 @@ enable_perf_event
 download_system_util
 
 ./flusher_threads.sh -s
-#sudo swapoff -a
-#sudo ../../util/disable_cpus.sh -d 8 15
-#sudo ../../util/disable_cpus.sh -d 24 31
-sudo rm -rf $ZOOKEEPER_DIR
-sudo mkdir -p $ZOOKEEPER_DIR
-sudo chown manosanag $ZOOKEEPER_DIR
-sudo rm -rf $TH_DIR
-sudo mkdir -p $TH_DIR
-sudo chown manosanag $TH_DIR
-#sudo mount /dev/$DEV_TH $TH_DIR
-#sudo mount /dev/$DEV_ZK $ZOOKEEPER_DIR
+sudo swapoff -a
+sudo ../../util/disable_cpus.sh -d 8 15
+sudo ../../util/disable_cpus.sh -d 24 31
+sudo mount /dev/$DEV_TH $TH_DIR
+sudo mount /dev/$DEV_ZK /mnt/spark
 
 # Run each benchmark
 for benchmark in "${BENCHMARKS[@]}"
@@ -687,9 +682,14 @@ do
 			# Copy the confifuration to the directory with the results
 			cp ./conf.sh "${RUN_DIR}/"
 
+			cp -r "$BENCHMARK_SUITE"/report/*-*-*-report-*/log/benchmark-full.log "${RUN_DIR}/"
 			cp -r "$BENCHMARK_SUITE"/report/*-*-*-report-*/log/benchmark-summary.log "${RUN_DIR}/"
 			cp -r "$BENCHMARK_SUITE"/report/bench.log "${RUN_DIR}/"
-			cp -r "$BENCHMARK_SUITE"/report/teraHeap.txt "${RUN_DIR}/"
+			
+			if [ $TH ]
+			then
+				cp -r "$BENCHMARK_SUITE"/report/teraHeap.txt "${RUN_DIR}/"
+			fi
 
 			rm -rf "${BENCHMARK_SUITE}"/report/*
 
@@ -719,11 +719,11 @@ do
 done
 
 ./flusher_threads.sh -r
-#sudo swapon -a
-#sudo ../../util/disable_cpus.sh -e 8 15
-#sudo ../../util/disable_cpus.sh -e 24 31
+sudo swapon -a
+sudo ../../util/disable_cpus.sh -e 8 15
+sudo ../../util/disable_cpus.sh -e 24 31
 sudo umount $TH_DIR
-sudo umount $ZOOKEEPER_DIR
+sudo umount /mnt/spark
 killall -9 java
 killall -9 jstat
 
