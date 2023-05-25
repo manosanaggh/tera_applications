@@ -158,6 +158,7 @@ clear_files() {
 #   Cretea necessary files
 ##
 create_files() {
+  rm -rf ../hadoop-2.4.0/logs/*
   mkdir -p "${DATASET_DIR}/graphalytics/hadoop_2"
   #fallocate -l ${TH_FILE_SZ}G ${TH_DIR}/file.txt
 }
