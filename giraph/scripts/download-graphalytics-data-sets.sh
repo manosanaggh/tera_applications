@@ -30,10 +30,10 @@ download_dataset() {
   #echo datagen-8_4-fb;     curl https://surfdrive.surf.nl/files/index.php/s/2xB1K9hVe3JSTdH/download | tar -xv --use-compress-program=unzstd
   #echo datagen-8_5-fb;     curl https://surfdrive.surf.nl/files/index.php/s/2d8wUj9HGIzime3/download | tar -xv --use-compress-program=unzstd
   #echo datagen-8_6-fb;     curl https://surfdrive.surf.nl/files/index.php/s/yyJoaazDGKmLc0k/download | tar -xv --use-compress-program=unzstd
-  #echo datagen-8_7-zf;     curl https://surfdrive.surf.nl/files/index.php/s/jik4NN4CDnUDmAG/download | tar -xv --use-compress-program=unzstd
+  echo datagen-8_7-zf;     curl https://surfdrive.surf.nl/files/index.php/s/jik4NN4CDnUDmAG/download | tar -xv --use-compress-program=unzstd
   #echo datagen-8_8-zf;     curl https://surfdrive.surf.nl/files/index.php/s/Qmi35tpKSjovS5d/download | tar -xv --use-compress-program=unzstd
   #echo datagen-8_9-fb;     curl https://surfdrive.surf.nl/files/index.php/s/A8dCtfeqNgSyAOF/download | tar -xv --use-compress-program=unzstd
-  echo datagen-9_0-fb;     curl https://surfdrive.surf.nl/files/index.php/s/RFkNmmIOewT3YSd/download | tar -xv --use-compress-program=unzstd
+  #echo datagen-9_0-fb;     curl https://surfdrive.surf.nl/files/index.php/s/RFkNmmIOewT3YSd/download | tar -xv --use-compress-program=unzstd
   #echo datagen-9_1-fb;     curl https://surfdrive.surf.nl/files/index.php/s/7vJ0i7Ydj67loEL/download | tar -xv --use-compress-program=unzstd
   #echo datagen-9_2-zf;     curl https://surfdrive.surf.nl/files/index.php/s/cT4SZT8frlaIkLI/download | tar -xv --use-compress-program=unzstd
   #echo datagen-9_3-zf;     curl https://surfdrive.surf.nl/files/index.php/s/DE67JXHTN3jxM7O/download | tar -xv --use-compress-program=unzstd

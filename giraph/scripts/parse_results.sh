@@ -48,8 +48,8 @@ done
 BENCH_FILE=$(find ${RESULT_DIR}/ -name "benchmark-summary.log")
 TOTAL_TIME=$(grep "execution process finished within" ${BENCH_FILE} | awk '{print $9}')
 
-MINOR_GC=$(tail -n 1 "${RESULT_DIR}"/jstat.txt      | awk '{printf("%.2f",$8)}')
-MAJOR_GC=$(tail -n 1 "${RESULT_DIR}"/jstat.txt      | awk '{printf("%.2f", $10)}')
+MINOR_GC=$(tail -n 1 "${RESULT_DIR}"/jstat_0.txt      | awk '{printf("%.2f",$8)}')
+MAJOR_GC=$(tail -n 1 "${RESULT_DIR}"/jstat_0.txt      | awk '{printf("%.2f", $10)}')
 
 # Caclulate the overheads in TC card table traversal, marking and adjust phases
 if [ $TC ]
@@ -80,7 +80,7 @@ fi
 # Caclulate the serialziation/deserialization overhead
 # Make Kryo to Java for SQL
 FLAMEGRAPH="$(pwd)/../../util/FlameGraph"
-"${FLAMEGRAPH}"/flamegraph.pl "${RESULT_DIR}"/serdes.txt > "${RESULT_DIR}"/profile.svg
+"${FLAMEGRAPH}"/flamegraph.pl "${RESULT_DIR}"/serdes_0.txt > "${RESULT_DIR}"/profile.svg
 SER_SAMPLES=$(grep "com/esotericsoftware/kryo/io/KryoDataOutput" "${RESULT_DIR}"/profile.svg \
 	| awk '{print $2}' \
 	| sed 's/,//g' | sed 's/(//g' \

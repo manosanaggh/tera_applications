@@ -42,7 +42,7 @@ i=0
 
 for execId in ${processId}
 do
-    jstat -gcutil ${execId} 1000 > "${OUTPUT}"/jstat.txt &
+    jstat -gcutil ${execId} 1000 > "${OUTPUT}_$i.txt" &
 
 	if [ $JIT -eq 1 ]
 	then

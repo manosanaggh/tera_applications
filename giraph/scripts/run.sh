@@ -13,20 +13,10 @@
 ###################################################
 
 . ./conf.sh
-: '
-export JAVA_HOME=${MY_JAVA_HOME}
-export HADOOP_HOME=${HADOOP}
-export HADOOP_PREFIX=${HADOOP}
-export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
-export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib -Djava.library.path=$HADOOP_HOME/lib/native"
-export HADOOP_OPTS="-Djava.library.path=$LD_LIBRARY_PATH"
-export PATH=$HADOOP_HOME/bin:$PATH
-export PATH=$HADOOP_HOME/sbin:$PATH
-export HADOOP_MAPRED_HOME=${HADOOP_HOME}
-export HADOOP_COMMON_HOME=${HADOOP_HOME}
-export HADOOP_HDFS_HOME=${HADOOP_HOME}
-export YARN_HOME=${HADOOP_HOME}
-'
+
+export HADOOP_HOME=/opt/manosanag/tera_applications_gh_instance_2/giraph/hadoop-2.4.0
+export HADOOP_PREFIX=/opt/manosanag/tera_applications_gh_instance_2/giraph/hadoop-2.4.0
+
 # Print error/usage script message
 usage() {
     echo
@@ -147,7 +137,7 @@ start_hadoop_yarn_zkeeper() {
 #   Clear files
 ##
 clear_files() {
-	rm -rf "${DATASET_DIR}/graphalytics/hadoop_2"
+	rm -rf "${DATASET_DIR}/graphalytics/hadoop"
   rm -rf "${TH_DIR}/file.txt"
   rm -rf "${ZOOKEEPER_DIR}/version-2"
   rm -rf "${ZOOKEEPER_DIR}/zookeeper_server.pid"
@@ -159,7 +149,7 @@ clear_files() {
 ##
 create_files() {
   rm -rf ../hadoop-2.4.0/logs/*
-  mkdir -p "${DATASET_DIR}/graphalytics/hadoop_2"
+  mkdir -p "${DATASET_DIR}/graphalytics/hadoop"
   #fallocate -l ${TH_FILE_SZ}G ${TH_DIR}/file.txt
 }
 
@@ -586,11 +576,11 @@ enable_perf_event
 download_system_util
 
 ./flusher_threads.sh -s
-sudo swapoff -a
-sudo ../../util/disable_cpus.sh -d 8 15
-sudo ../../util/disable_cpus.sh -d 24 31
-sudo mount /dev/$DEV_TH $TH_DIR
-sudo mount /dev/$DEV_ZK /mnt/spark
+#sudo swapoff -a
+#sudo ../../util/disable_cpus.sh -d 8 15
+#sudo ../../util/disable_cpus.sh -d 24 31
+#sudo mount /dev/$DEV_TH $TH_DIR
+#sudo mount /dev/$DEV_ZK /mnt/spark
 
 # Run each benchmark
 for benchmark in "${BENCHMARKS[@]}"
@@ -612,7 +602,9 @@ do
 
 			mkdir -p "${OUT}/${benchmark}/conf${i}/run${j}"
 			RUN_DIR="${OUT}/${benchmark}/conf${i}/run${j}"
-
+      rm -rf run_dir.sh
+      echo "RUN_DIR=$RUN_DIR" > run_dir.sh
+      chmod +x run_dir.sh
 			# Drop caches
 			sudo sync && echo 3 | sudo tee /proc/sys/vm/drop_caches >> "${LOG}" 2>&1
 
@@ -633,7 +625,7 @@ do
 			
 			update_conf "${benchmark}" ${SERDES}
 
-			if [ -z "$JIT" ]
+: '			if [ -z "$JIT" ]
 			then
 				# Collect statics only for the garbage collector
 				./jstat.sh "${RUN_DIR}" "${EXECUTORS}" 0 &
@@ -641,14 +633,14 @@ do
 				# Collect statics for garbage collector and JIT
 				./jstat.sh "${RUN_DIR}" "${EXECUTORS}" 1 &
 			fi
-			
+'			
 			if [ $PERF_TOOL ]
 			then
 				# Count total cache references, misses and pagefaults
 				./perf.sh "${RUN_DIR}"/perf.txt "${EXECUTORS}" &
 			fi
 
-			./serdes.sh "${RUN_DIR}"/serdes.txt "${EXECUTORS}" &
+#			./serdes.sh "${RUN_DIR}"/serdes.txt "${EXECUTORS}" &
 			
 			# Enable profiler
 			if [ ${PROFILER} ]
@@ -686,6 +678,7 @@ do
 			cp -r "$BENCHMARK_SUITE"/report/*-*-*-report-*/log/benchmark-full.log "${RUN_DIR}/"
 			cp -r "$BENCHMARK_SUITE"/report/*-*-*-report-*/log/benchmark-summary.log "${RUN_DIR}/"
 			cp -r "$BENCHMARK_SUITE"/report/bench.log "${RUN_DIR}/"
+                        :wqa
 			
 			if [ $TH ]
 			then
@@ -694,13 +687,13 @@ do
 
 			rm -rf "${BENCHMARK_SUITE}"/report/*
 
-			if [ $TH ]
+			: 'if [ $TH ]
 			then
 				./parse_results.sh -d "${RUN_DIR}" -t  >> "${LOG}" 2>&1
 			else
 				./parse_results.sh -d "${RUN_DIR}" >> "${LOG}" 2>&1
 			fi
-
+'
 			stop_hadoop_yarn_zkeeper
 
       clear_files
@@ -720,12 +713,12 @@ do
 done
 
 ./flusher_threads.sh -r
-sudo swapon -a
-sudo ../../util/disable_cpus.sh -e 8 15
-sudo ../../util/disable_cpus.sh -e 24 31
-sudo umount $TH_DIR
-sudo umount /mnt/spark
-killall -9 java
-killall -9 jstat
+#sudo swapon -a
+#sudo ../../util/disable_cpus.sh -e 8 15
+#sudo ../../util/disable_cpus.sh -e 24 31
+#sudo umount $TH_DIR
+#sudo umount /mnt/spark
+#killall -9 java
+#killall -9 jstat
 
 exit
