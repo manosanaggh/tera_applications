@@ -1,18 +1,18 @@
 HOSTNAME=sith5-fast
 MY_JAVA_HOME=/opt/manosanag/teraheap/jdk8u345/build/linux-x86_64-normal-server-release/jdk
 #MY_JAVA_HOME=/opt/manosanag/jdk8u/build/linux-x86_64-normal-server-release/jdk
-BENCHMARK_SUITE="/opt/manosanag/tera_applications_gh_instance_2/giraph/graphalytics-platforms-giraph/graphalytics-1.2.0-giraph-0.2-SNAPSHOT"
+BENCHMARK_SUITE="/opt/manosanag/tera_applications_gh/giraph/graphalytics-platforms-giraph/graphalytics-1.2.0-giraph-0.2-SNAPSHOT"
 BENCHMARK_CONFIG="${BENCHMARK_SUITE}/config"
 LOG="$BENCHMARK_SUITE/report/bench.log"
 mkdir -p "$BENCHMARK_SUITE/report/"
 touch $LOG
-HADOOP="/opt/manosanag/tera_applications_gh_instance_2/giraph/hadoop-2.4.0"
-ZOOKEEPER="/opt/manosanag/tera_applications_gh_instance_2/giraph/zookeeper-3.4.1"
-DATASET_DIR="/home1/public/manosanag/datasets/giraph_2"
+HADOOP="/opt/manosanag/tera_applications_gh/giraph/hadoop-2.4.0"
+ZOOKEEPER="/opt/manosanag/tera_applications_gh/giraph/zookeeper-3.4.1"
+DATASET_DIR="/home1/public/manosanag/datasets/giraph"
 RAMDISK_SCRIPT_DIR=/tmp
 RAMDISK_DIR=/mnt/ramdisk
 # Directory that zookeeper use during experiment
-ZOOKEEPER_DIR=/mnt/spark/spark
+ZOOKEEPER_DIR=/mnt/spark
 # Directory that contains the file for teraheap. In case of off-heap experiments
 # these directory contains the 
 TH_DIR=/mnt/fmap

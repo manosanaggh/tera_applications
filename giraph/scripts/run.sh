@@ -14,8 +14,8 @@
 
 . ./conf.sh
 
-export HADOOP_HOME=/opt/manosanag/tera_applications_gh_instance_2/giraph/hadoop-2.4.0
-export HADOOP_PREFIX=/opt/manosanag/tera_applications_gh_instance_2/giraph/hadoop-2.4.0
+export HADOOP_HOME=/opt/manosanag/tera_applications_gh/giraph/hadoop-2.4.0
+export HADOOP_PREFIX=/opt/manosanag/tera_applications_gh/giraph/hadoop-2.4.0
 
 # Print error/usage script message
 usage() {
@@ -56,19 +56,19 @@ check () {
 #   Create a cgroup
 setup_cgroup() {
 	# Change user/group IDs to your own
-	sudo cgcreate -a manosanag:carvsudo -t manosanag:carvsudo -g memory:memlim2
-	cgset -r memory.limit_in_bytes="$MEM_BUDGET" memlim2
+	sudo cgcreate -a manosanag:carvsudo -t manosanag:carvsudo -g memory:memlim
+	cgset -r memory.limit_in_bytes="$MEM_BUDGET" memlim
 }
 
 ##
 # Description:
 #   Delete a cgroup
 delete_cgroup() {
-	sudo cgdelete memory:memlim2
+	sudo cgdelete memory:memlim
 }
 
 run_cgexec() {
-  cgexec -g memory:memlim2 --sticky /opt/manosanag/tera_applications_gh_instance_2/giraph/scripts/run_cgexec.sh "$@"
+  cgexec -g memory:memlim --sticky /opt/manosanag/tera_applications_gh_instance_2/giraph/scripts/run_cgexec.sh "$@"
 }
 
 ##
@@ -174,7 +174,7 @@ stop_hadoop_yarn_zkeeper() {
 	check ${retValue} "${message}"
 
   # Kill all the processes in the cgroup. In case the group 
-  xargs -a /sys/fs/cgroup/memory/memlim2/cgroup.procs kill
+  xargs -a /sys/fs/cgroup/memory/memlim/cgroup.procs kill
 }
 
 ##
@@ -286,7 +286,7 @@ update_conf() {
     "${BENCHMARK_CONFIG}"/benchmark.properties 
 
   # Set address of ZooKeeper deployment (required)
-  command="platform.giraph.zoo-keeper-address: ${HOSTNAME}:2182"
+  command="platform.giraph.zoo-keeper-address: ${HOSTNAME}:2181"
   sed -i '/platform.giraph.zoo-keeper-address/c\'"${command}" \
     "${BENCHMARK_CONFIG}"/platform.properties
 
@@ -678,7 +678,6 @@ do
 			cp -r "$BENCHMARK_SUITE"/report/*-*-*-report-*/log/benchmark-full.log "${RUN_DIR}/"
 			cp -r "$BENCHMARK_SUITE"/report/*-*-*-report-*/log/benchmark-summary.log "${RUN_DIR}/"
 			cp -r "$BENCHMARK_SUITE"/report/bench.log "${RUN_DIR}/"
-                        :wqa
 			
 			if [ $TH ]
 			then
