@@ -1,1 +1,1 @@
-RUN_DIR=/home1/public/manosanag/pr_giraph_sith5_native_14:37:37-13-06-2023/pr/conf0/run0
+RUN_DIR=/home1/public/manosanag/cdlp_giraph_sith5_th_21:49:41-15-06-2023/cdlp/conf0/run0

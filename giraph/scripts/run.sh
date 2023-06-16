@@ -14,8 +14,18 @@
 
 . ./conf.sh
 
+export JAVA_HOME=${MY_JAVA_HOME}
 export HADOOP_HOME=/opt/manosanag/tera_applications_gh/giraph/hadoop-2.4.0
 export HADOOP_PREFIX=/opt/manosanag/tera_applications_gh/giraph/hadoop-2.4.0
+export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
+export HADOOP_OPTS="$HADOOP_OPTS -Djava.library.path=$HADOOP_HOME/lib -Djava.library.path=$HADOOP_HOME/lib/native"
+export HADOOP_OPTS="$HADOOP_OPTS -Djava.library.path=$LD_LIBRARY_PATH"
+export PATH=$HADOOP_HOME/bin:$PATH
+export PATH=$HADOOP_HOME/sbin:$PATH
+export HADOOP_MAPRED_HOME=${HADOOP_HOME}
+export HADOOP_COMMON_HOME=${HADOOP_HOME}
+export HADOOP_HDFS_HOME=${HADOOP_HOME}
+export YARN_HOME=${HADOOP_HOME}
 
 # Print error/usage script message
 usage() {
@@ -68,7 +78,7 @@ delete_cgroup() {
 }
 
 run_cgexec() {
-  cgexec -g memory:memlim --sticky /opt/manosanag/tera_applications_gh_instance_2/giraph/scripts/run_cgexec.sh "$@"
+  cgexec -g memory:memlim --sticky /opt/manosanag/tera_applications_gh/giraph/scripts/run_cgexec.sh "$@"
 }
 
 ##
@@ -93,7 +103,7 @@ start_hadoop_yarn_zkeeper() {
 		jvm_opts+="-XX:-UseCompressedClassPointers "
 		jvm_opts+="-XX:AllocateH2At=\/mnt\/fmap\/file.txt "
 		jvm_opts+="-XX:H2FileSize=483183820800 "
-		jvm_opts+="-XX:+TeraHeapStatistics -Xlogth:\/opt\/manosanag\/tera_applications_gh_instance_2\/giraph\/graphalytics-platforms-giraph\/graphalytics-1.2.0-giraph-0.2-SNAPSHOT\/report\/teraHeap.txt "
+		jvm_opts+="-XX:+TeraHeapStatistics -Xlogth:\/opt\/manosanag\/tera_applications_gh\/giraph\/graphalytics-platforms-giraph\/graphalytics-1.2.0-giraph-0.2-SNAPSHOT\/report\/teraHeap.txt "
 		jvm_opts+="-XX:TeraStripeSize=${STRIPE_SIZE} -XX:+ShowMessageBoxOnError<\/value>"
 	else
 		jvm_opts="\t\t<value>-Xmx${HEAP}g -XX:-ClassUnloading -XX:+UseParallelGC "
@@ -675,8 +685,7 @@ do
 			# Copy the confifuration to the directory with the results
 			cp ./conf.sh "${RUN_DIR}/"
 
-			cp -r "$BENCHMARK_SUITE"/report/*-*-*-report-*/log/benchmark-full.log "${RUN_DIR}/"
-			cp -r "$BENCHMARK_SUITE"/report/*-*-*-report-*/log/benchmark-summary.log "${RUN_DIR}/"
+			cp -r "$BENCHMARK_SUITE"/report/*-*-*-report-*/log/* "${RUN_DIR}/"
 			cp -r "$BENCHMARK_SUITE"/report/bench.log "${RUN_DIR}/"
 			
 			if [ $TH ]

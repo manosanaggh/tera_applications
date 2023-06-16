@@ -37,7 +37,7 @@ processId=$(jps |\
 
 for execId in ${processId}
 do
-	perf stat -o ${OUTPUT} -e cache-references,cache-misses,page-faults,major-faults,minor-faults,dTLB-load-misses,dTLB-store-misses -p ${execId} &
+	perf stat -o ${OUTPUT}_$i.txt -e cache-references,cache-misses,page-faults,major-faults,minor-faults,dTLB-load-misses,dTLB-store-misses -p ${execId} &
 
 	#perf stat -o ${OUTPUT} -e cache-references,cache-misses \
 	#	-e dTLB-load-misses,dTLB-store-misses \
@@ -45,6 +45,7 @@ do
 	#	-e LLC-load-misses,LLC-loads,LLC-store-misses,LLC-stores -p ${execId} &
 	
 	#perf stat -o ${OUTPUT} -e cpu-cycles,instructions -p ${execId} &
+	i=$((i+1))	
 done
 
 exit

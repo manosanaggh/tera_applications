@@ -25,16 +25,16 @@ DEV_TH=nvme0n1
 # TeraHeap file size in GB e.g. 900 -> 900GB
 TH_FILE_SZ=450
 # Heap size for executors '-Xms'
-HEAP=22
+HEAP=18
 # Garbage collection threads
 GC_THREADS=8
 # Number of compute threads
 COMPUTE_THREADS=8
 # Dataset name
-DATASET="datagen-7_5-fb" 
+DATASET="datagen-8_6-fb" 
 # Benchmarks to run
 #BENCHMARKS=( "pr" "bfs" "wcc" "cdlp" "sssp" )
-BENCHMARKS=( "pr" )
+BENCHMARKS=( "cdlp" )
 # Number of executors
 EXECUTORS=1
 # cgset accepts K,M,G and eiB, MiB, GiB units for memory limit
